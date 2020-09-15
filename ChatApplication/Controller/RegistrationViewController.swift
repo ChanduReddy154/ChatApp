@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate{
     
-    let picker = UIDatePicker()
-    
+    let datePicker = UIDatePicker()
+    let genderPicker = UIPickerView()
+    let genderItems = ["Male", "Female", "Other"]
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.clipsToBounds = true
@@ -20,7 +22,7 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "person")
+        imageView.image = UIImage(systemName: "person.circle")
         imageView.layer.masksToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.layer.borderWidth = 2
@@ -31,7 +33,6 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
     
     private let FirstNameTextField: UITextField = {
         let fnameField = UITextField()
-        fnameField.autocapitalizationType = .none
         fnameField.placeholder = "FirstName"
         fnameField.autocorrectionType = .no
         fnameField.layer.cornerRadius = 15
@@ -46,7 +47,6 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
     
     private let lastNameTextField: UITextField = {
         let lnameField = UITextField()
-        lnameField.autocapitalizationType = .none
         lnameField.placeholder = "LastName"
         lnameField.autocorrectionType = .no
         lnameField.layer.cornerRadius = 15
@@ -59,18 +59,29 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
         return lnameField
     }()
     private let dobTextField: UITextField = {
-        let lnameField = UITextField()
-        lnameField.placeholder = "DOB"
-        lnameField.layer.cornerRadius = 15
-        lnameField.layer.borderWidth = 2
-        lnameField.layer.borderColor = UIColor.darkGray.cgColor
-        lnameField.leftView = UIView(frame: CGRect(x: 0,y: 0,width: 10,height: 0))
-        lnameField.leftViewMode = .always
-        lnameField.backgroundColor = .white
-        lnameField.returnKeyType = .continue
-        return lnameField
+        let dobField = UITextField()
+        dobField.placeholder = "DOB"
+        dobField.layer.cornerRadius = 15
+        dobField.layer.borderWidth = 2
+        dobField.layer.borderColor = UIColor.darkGray.cgColor
+        dobField.leftView = UIView(frame: CGRect(x: 0,y: 0,width: 10,height: 0))
+        dobField.leftViewMode = .always
+        dobField.backgroundColor = .white
+        dobField.returnKeyType = .continue
+        return dobField
     }()
-
+    private let genderTextField: UITextField = {
+        let genderField = UITextField()
+        genderField.placeholder = "Gender"
+        genderField.layer.cornerRadius = 15
+        genderField.layer.borderWidth = 2
+        genderField.layer.borderColor = UIColor.darkGray.cgColor
+        genderField.leftView = UIView(frame: CGRect(x: 0,y: 0,width: 10,height: 0))
+        genderField.leftViewMode = .always
+        genderField.backgroundColor = .white
+        genderField.returnKeyType = .continue
+        return genderField
+    }()
     private let emailTextField: UITextField = {
         let emailField = UITextField()
         emailField.autocapitalizationType = .none
@@ -86,25 +97,25 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
         return emailField
     }()
     private let passwordTextField: UITextField = {
-           let passField = UITextField()
-           passField.autocapitalizationType = .none
-           passField.placeholder = "Password"
-           passField.autocorrectionType = .no
-           passField.layer.cornerRadius = 15
-           passField.layer.borderWidth = 2
-           passField.layer.borderColor = UIColor.darkGray.cgColor
-           passField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
-           passField.leftViewMode = .always
-           passField.backgroundColor = .white
+        let passField = UITextField()
+        passField.autocapitalizationType = .none
+        passField.placeholder = "Password"
+        passField.autocorrectionType = .no
+        passField.layer.cornerRadius = 15
+        passField.layer.borderWidth = 2
+        passField.layer.borderColor = UIColor.darkGray.cgColor
+        passField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
+        passField.leftViewMode = .always
+        passField.backgroundColor = .white
         passField.isSecureTextEntry = true
         passField.returnKeyType = .done
-           return passField
-       }()
+        return passField
+    }()
     private let registerButton: UIButton = {
         let button = UIButton()
         button.setTitle("Register", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .green
+        button.backgroundColor = .link
         button.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
         button.layer.cornerRadius = 15
         button.layer.masksToBounds = true
@@ -122,17 +133,23 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
         FirstNameTextField.delegate = self
         lastNameTextField.delegate = self
         dobTextField.delegate = self
+        genderTextField.delegate = self
         emailTextField.delegate = self
         passwordTextField.delegate = self
+        genderPicker.delegate = self
+        genderPicker.dataSource = self
+        //animateButton(button: registerButton)
         view.addSubview(scrollView)
         scrollView.addSubview(imageView)
         scrollView.addSubview(FirstNameTextField)
         scrollView.addSubview(lastNameTextField)
         scrollView.addSubview(dobTextField)
+        scrollView.addSubview(genderTextField)
         scrollView.addSubview(emailTextField)
         scrollView.addSubview(passwordTextField)
         scrollView.addSubview(registerButton)
         showDatePicker()
+        pickerGender()
         imageView.isUserInteractionEnabled =  true
         scrollView.isUserInteractionEnabled = true
         let gesture = UITapGestureRecognizer(target: self, action: #selector(profilePicTapped))
@@ -159,12 +176,15 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
                                          width: scrollView.width-60,
                                          height: 50)
         dobTextField.frame = CGRect(x: 30,
-                                      y: lastNameTextField.bottom + 10,
-                                      width: scrollView.width-60,
-                                      height: 50)
-        
+                                    y: lastNameTextField.bottom + 10,
+                                    width: scrollView.width-60,
+                                    height: 50)
+        genderTextField.frame = CGRect(x: 30,
+                                    y: dobTextField.bottom + 10,
+                                    width: scrollView.width-60,
+                                    height: 50)
         emailTextField.frame = CGRect(x: 30,
-                                      y: dobTextField.bottom + 10,
+                                      y: genderTextField.bottom + 10,
                                       width: scrollView.width-60,
                                       height: 50)
         passwordTextField.frame = CGRect(x: 30,
@@ -172,44 +192,68 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
                                          width: scrollView.width-60,
                                          height: 50)
         registerButton.frame = CGRect(x: 30,
-                                   y: passwordTextField.bottom + 20,
-                                   width: scrollView.width-60,
-                                   height: 50)
+                                      y: passwordTextField.bottom + 20,
+                                      width: scrollView.width-60,
+                                      height: 50)
     }
+    /*   func animateButton(button: UIButton) {
+     let animateButton = UIView(frame: CGRect(x: button.bounds.maxX, y: button.bounds.maxY, width: button.bounds.width/2, height: button.bounds.height))
+     animateButton.isUserInteractionEnabled = true
+     let gradientView = CAGradientLayer()
+     gradientView.frame = animateButton.bounds
+     gradientView.colors = [UIColor.magenta.cgColor, UIColor.black.cgColor]
+     gradientView.locations = [0, 1.0]
+     gradientView.startPoint = CGPoint(x: 1.0, y: 1.0)
+     gradientView.endPoint = CGPoint(x: 0, y: 0)
+     gradientView.opacity = 0.5
+     animateButton.layer.addSublayer(gradientView)
+     button.addSubview(animateButton)
+     UIView.animate(withDuration: 1.5, delay: 0, options: .repeat, animations: {
+     animateButton.transform = animateButton.transform.translatedBy(x: -button.bounds.maxX * 1.5, y: 0)
+     }, completion: nil)
+     } */
     
     @objc private func registerButtonTapped() {
         
-        guard let fname = FirstNameTextField.text, let lName = lastNameTextField.text, let dob = dobTextField.text, let email = emailTextField.text, let pass = passwordTextField.text, !fname.isEmpty, !lName.isEmpty, !dob.isEmpty, !email.isEmpty,
-        !pass.isEmpty, pass.count >= 6 else {
-            errorMessageAlert()
-            return
+        guard let fname = FirstNameTextField.text, let lName = lastNameTextField.text, let dob = dobTextField.text, let gender = genderTextField.text, let email = emailTextField.text, let pass = passwordTextField.text, !fname.isEmpty, !lName.isEmpty, !dob.isEmpty, !email.isEmpty,
+            !pass.isEmpty, pass.count >= 6 else {
+                errorMessageAlert(message: "Please enter all fields")
+                return
+        }
+        //Firebase Register
+        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: pass) { (result, error) in
+            if error != nil {
+                self.errorMessageAlert(message: "Email Already Exists")
+                return
+            }
+            DataBaseManager.shared.insertUser(with: ChatUsers(firstName: fname, lastName: lName, email: email, dob: dob, gender: gender))
+            self.navigationController?.dismiss(animated: true, completion: nil)
+            
         }
     }
-    func errorMessageAlert() {
-        let alert = UIAlertController(title: "ErrorMessage", message: "Something went wrong", preferredStyle: .alert)
+    func errorMessageAlert(message : String) {
+        let alert = UIAlertController(title: "ErrorMessage", message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "Dismiss", style: .cancel, handler: nil)
         alert.addAction(action)
         present(alert, animated: true)
     }
     
     func showDatePicker() {
-        picker.datePickerMode = .date
-        
+        datePicker.datePickerMode = .date
         let toolbar = UIToolbar()
         toolbar.sizeToFit()
-        
         let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(donedatePicker))
         let spaceButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
         let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(cancelDatePicker))
         toolbar.setItems([cancelButton,spaceButton,doneButton], animated: false)
         dobTextField.inputAccessoryView = toolbar
-        dobTextField.inputView = picker
+        dobTextField.inputView = datePicker
         
     }
     @objc func donedatePicker() {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd/MM/yyyy"
-        dobTextField.text = formatter.string(from: picker.date)
+        dobTextField.text = formatter.string(from: datePicker.date)
         self.view.endEditing(true)
     }
     
@@ -227,6 +271,8 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
         }else if textField == lastNameTextField {
             dobTextField.becomeFirstResponder()
         }else if textField == dobTextField {
+            genderTextField.becomeFirstResponder()
+        }else if textField == genderTextField {
             emailTextField.becomeFirstResponder()
         }else if textField == emailTextField {
             passwordTextField.becomeFirstResponder()
@@ -246,17 +292,17 @@ extension RegistrationViewController: UIImagePickerControllerDelegate {
                                       style: .default,
                                       handler: {_ in
                                         self.accessCamera()
-                                    }))
+        }))
         alert.addAction(UIAlertAction(title: "Photo Library",
                                       style: .default,
                                       handler: {_ in
                                         self.accessPhotoLibrary()
-                                    }))
+        }))
         present(alert, animated: true)
     }
     
     func accessCamera() {
-      let pic = UIImagePickerController()
+        let pic = UIImagePickerController()
         pic.allowsEditing = true
         pic.delegate = self
         pic.sourceType = .camera
@@ -280,5 +326,39 @@ extension RegistrationViewController: UIImagePickerControllerDelegate {
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
+    }
+}
+
+extension RegistrationViewController : UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return genderItems.count
+    }
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return genderItems[row]
+    }
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        genderTextField.text = genderItems[row]
+    }
+    func pickerGender() {
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(donePicker))
+        let spaceButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
+        let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(cancelPicker))
+        toolbar.setItems([cancelButton,spaceButton,doneButton], animated: false)
+        genderTextField.inputAccessoryView = toolbar
+        genderTextField.inputView = genderPicker
+    }
+    
+    @objc private func donePicker() {
+        genderTextField.resignFirstResponder()
+    }
+    
+    @objc private func cancelPicker() {
+        self.view.endEditing(true)
     }
 }

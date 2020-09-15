@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
     
@@ -70,7 +71,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         button.layer.borderColor = UIColor.lightGray.cgColor
         return button
     }()
-    private let RegisterButton: UIButton = {
+    private let registerButton: UIButton = {
         let button = UIButton()
         button.setTitle("Register", for: .normal)
         button.setTitleColor(.white, for: .normal)
@@ -82,12 +83,25 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         button.layer.borderColor = UIColor.lightGray.cgColor
         return button
     }()
+    private let forgotPassButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("ForgotPassword", for: .normal)
+        button.setTitleColor(.magenta, for: .normal)
+        button.backgroundColor = .white
+        button.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
+        button.layer.cornerRadius = 15
+        button.layer.masksToBounds = true
+        button.layer.borderWidth = 0
+        button.layer.borderColor = UIColor.lightGray.cgColor
+        return button
+    }()
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Login"
         view.backgroundColor = .white
         loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
-        RegisterButton.addTarget(self, action: #selector(RegisterButtonTapped), for: .touchUpInside)
+        registerButton.addTarget(self, action: #selector(RegisterButtonTapped), for: .touchUpInside)
+        forgotPassButton.addTarget(self, action: #selector(forgotPass), for: .touchUpInside)
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
         view.addGestureRecognizer(tap)
         emailTextField.delegate = self
@@ -97,7 +111,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         scrollView.addSubview(emailTextField)
         scrollView.addSubview(passwordTextField)
         scrollView.addSubview(loginButton)
-        scrollView.addSubview(RegisterButton)
+        scrollView.addSubview(registerButton)
+        scrollView.addSubview(forgotPassButton)
         scrollView.isUserInteractionEnabled = true
 
     }
@@ -123,10 +138,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                                    y: passwordTextField.bottom + 10,
                                    width: scrollView.width-60,
                                    height: 50)
-        RegisterButton.frame = CGRect(x: 30,
-                                   y: loginButton.bottom + 50,
-                                   width: scrollView.width-60,
-                                   height: 50)
+        registerButton.frame = CGRect(x: 30,
+                                      y: loginButton.bottom + 10,
+                                      width: scrollView.width-60,
+                                      height: 50)
+        forgotPassButton.frame = CGRect(x: 30,
+                                        y: registerButton.bottom + 10,
+                                      width: scrollView.width-60,
+                                      height: 50)
     }
     
     @objc private func loginButtonTapped() {
@@ -135,6 +154,17 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         !pass.isEmpty, pass.count >= 6 else {
             errorMessageAlert()
             return
+        }
+        
+        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: pass) { (authResult, error) in
+            guard let result = authResult, error == nil else {
+                print("Error while signing in")
+               return
+            }
+            
+            let user = result.user
+            print("Succesfully Logged in\(user)")
+            self.navigationController?.dismiss(animated: true, completion: nil)
         }
     }
     func errorMessageAlert() {
@@ -147,6 +177,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @objc private func RegisterButtonTapped() {
         let nav = RegistrationViewController()
         navigationController?.pushViewController(nav, animated: true)
+    }
+    
+    @objc private func forgotPass() {
+        navigationController?.pushViewController(ForgotPassViewController(), animated: true)
     }
     
     @objc func dismissKeyboard() {
