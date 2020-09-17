@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B4D289C2513D9270038C9D8 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4D289B2513D9270038C9D8 /* Constants.swift */; };
 		1B8E272E2508C01300F9224C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1B8E272D2508C01300F9224C /* GoogleService-Info.plist */; };
 		1BA204D32510DD040072BEBA /* DataBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA204D22510DD040072BEBA /* DataBase.swift */; };
 		1BA204D52510E21A0072BEBA /* ForgotPassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA204D42510E21A0072BEBA /* ForgotPassViewController.swift */; };
@@ -28,6 +29,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1B4D289B2513D9270038C9D8 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		1B8E272D2508C01300F9224C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1BA204D22510DD040072BEBA /* DataBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBase.swift; sourceTree = "<group>"; };
 		1BA204D42510E21A0072BEBA /* ForgotPassViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPassViewController.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 			children = (
 				1BF778CC2507E19D002280CC /* Extensions.swift */,
 				1BA204D22510DD040072BEBA /* DataBase.swift */,
+				1B4D289B2513D9270038C9D8 /* Constants.swift */,
 			);
 			path = "Helpers & Extensions";
 			sourceTree = "<group>";
@@ -283,6 +286,7 @@
 				1BBC56DE2507D76B00CDF621 /* VideoPlayerViewController.swift in Sources */,
 				1BA204D52510E21A0072BEBA /* ForgotPassViewController.swift in Sources */,
 				1BBC56E02507D81200CDF621 /* ProfileViewController.swift in Sources */,
+				1B4D289C2513D9270038C9D8 /* Constants.swift in Sources */,
 				1BA64E6C24EAB08F000DB32E /* SceneDelegate.swift in Sources */,
 				1BBC56D82507D73500CDF621 /* RegistrationViewController.swift in Sources */,
 			);

@@ -17,11 +17,12 @@ final class DataBaseManager {
     private let dataBaseref = Database.database().reference()
     
     func insertUser(with User: ChatUsers) {
-        dataBaseref.child(User.email).setValue([
+        dataBaseref.child(User.safeEmail).setValue([
             "first_name" : User.firstName,
             "last_name" : User.lastName,
             "dob" : User.dob,
-            "gender" : User.gender
+            "gender" : User.gender,
+            "password" : User.passWrd
         ])
     }
     

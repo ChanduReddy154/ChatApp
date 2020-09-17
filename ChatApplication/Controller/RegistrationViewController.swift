@@ -132,8 +132,8 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
         view.addGestureRecognizer(tap)
         FirstNameTextField.delegate = self
         lastNameTextField.delegate = self
-        dobTextField.delegate = self
-        genderTextField.delegate = self
+       // dobTextField.delegate = self
+       // genderTextField.delegate = self
         emailTextField.delegate = self
         passwordTextField.delegate = self
         genderPicker.delegate = self
@@ -215,18 +215,18 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
     
     @objc private func registerButtonTapped() {
         
-        guard let fname = FirstNameTextField.text, let lName = lastNameTextField.text, let dob = dobTextField.text, let gender = genderTextField.text, let email = emailTextField.text, let pass = passwordTextField.text, !fname.isEmpty, !lName.isEmpty, !dob.isEmpty, !email.isEmpty,
+        guard let fname = FirstNameTextField.text, let lName = lastNameTextField.text, let dob = dobTextField.text, let gender = genderTextField.text, let email = emailTextField.text, let pass = passwordTextField.text, !fname.isEmpty, !lName.isEmpty, !email.isEmpty, !dob.isEmpty, !gender.isEmpty,
             !pass.isEmpty, pass.count >= 6 else {
                 errorMessageAlert(message: "Please enter all fields")
                 return
-        }
+            }
         //Firebase Register
         FirebaseAuth.Auth.auth().createUser(withEmail: email, password: pass) { (result, error) in
             if error != nil {
                 self.errorMessageAlert(message: "Email Already Exists")
                 return
             }
-            DataBaseManager.shared.insertUser(with: ChatUsers(firstName: fname, lastName: lName, email: email, dob: dob, gender: gender))
+            DataBaseManager.shared.insertUser(with: ChatUsers(firstName: fname, lastName: lName, email: email, dob: dob, gender: gender, passWrd: pass))
             self.navigationController?.dismiss(animated: true, completion: nil)
             
         }
@@ -238,7 +238,7 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
         present(alert, animated: true)
     }
     
-    func showDatePicker() {
+   func showDatePicker() {
         datePicker.datePickerMode = .date
         let toolbar = UIToolbar()
         toolbar.sizeToFit()
@@ -252,7 +252,7 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
     }
     @objc func donedatePicker() {
         let formatter = DateFormatter()
-        formatter.dateFormat = "dd/MM/yyyy"
+        formatter.dateFormat = "dd/MM/YYYY"
         dobTextField.text = formatter.string(from: datePicker.date)
         self.view.endEditing(true)
     }
@@ -269,12 +269,10 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
         if textField == FirstNameTextField {
             lastNameTextField.becomeFirstResponder()
         }else if textField == lastNameTextField {
-            dobTextField.becomeFirstResponder()
-        }else if textField == dobTextField {
-            genderTextField.becomeFirstResponder()
-        }else if textField == genderTextField {
             emailTextField.becomeFirstResponder()
-        }else if textField == emailTextField {
+            //dobTextField.becomeFirstResponder()
+        }//else if textField == dobTextField {
+        else if textField == emailTextField {
             passwordTextField.becomeFirstResponder()
         }else if textField == passwordTextField {
             registerButtonTapped()
@@ -329,7 +327,7 @@ extension RegistrationViewController: UIImagePickerControllerDelegate {
     }
 }
 
-extension RegistrationViewController : UIPickerViewDelegate, UIPickerViewDataSource {
+ extension RegistrationViewController : UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }

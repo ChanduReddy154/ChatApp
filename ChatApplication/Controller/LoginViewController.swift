@@ -88,7 +88,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         button.setTitle("ForgotPassword", for: .normal)
         button.setTitleColor(.magenta, for: .normal)
         button.backgroundColor = .white
-        button.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
+        button.titleLabel?.font = .systemFont(ofSize: 20, weight: .semibold)
         button.layer.cornerRadius = 15
         button.layer.masksToBounds = true
         button.layer.borderWidth = 0
@@ -114,7 +114,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         scrollView.addSubview(registerButton)
         scrollView.addSubview(forgotPassButton)
         scrollView.isUserInteractionEnabled = true
-
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -125,7 +125,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                                  y: 20,
                                  width: size,
                                  height: size)
-            
         emailTextField.frame = CGRect(x: 30,
                                       y: imageView.bottom + 10,
                                       width: scrollView.width-60,
@@ -144,31 +143,28 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                                       height: 50)
         forgotPassButton.frame = CGRect(x: 30,
                                         y: registerButton.bottom + 10,
-                                      width: scrollView.width-60,
-                                      height: 50)
+                                        width: scrollView.width - 60,
+                                        height: 50)
+//        forgotPassButton.frame.origin = CGPoint(x: 30, y: self.view.frame.size.height - forgotPassButton.frame.size.height - 20)
     }
     
     @objc private func loginButtonTapped() {
         
        guard let email = emailTextField.text, let pass = passwordTextField.text, !email.isEmpty,
         !pass.isEmpty, pass.count >= 6 else {
-            errorMessageAlert()
+            errorMessageAlert(message: "Please enter all fields")
             return
         }
         
         FirebaseAuth.Auth.auth().signIn(withEmail: email, password: pass) { (authResult, error) in
-            guard let result = authResult, error == nil else {
-                print("Error while signing in")
-               return
+           if error != nil  {
+            self.errorMessageAlert(message: "Email or Password are incorrect")
             }
-            
-            let user = result.user
-            print("Succesfully Logged in\(user)")
             self.navigationController?.dismiss(animated: true, completion: nil)
         }
     }
-    func errorMessageAlert() {
-        let alert = UIAlertController(title: "ErrorMessage", message: "Something went wrong", preferredStyle: .alert)
+    func errorMessageAlert(message : String) {
+        let alert = UIAlertController(title: "ErrorMessage", message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "Dismiss", style: .cancel, handler: nil)
         alert.addAction(action)
         present(alert, animated: true)
