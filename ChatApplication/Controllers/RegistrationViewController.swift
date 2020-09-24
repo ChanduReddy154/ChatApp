@@ -8,18 +8,21 @@
 
 import UIKit
 import FirebaseAuth
+import JGProgressHUD
 
 class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate{
-    
+    let spinner = JGProgressHUD(style: .dark)
     let datePicker = UIDatePicker()
     let genderPicker = UIPickerView()
     let genderItems = ["Male", "Female", "Other"]
+    
     private let scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
+        var scrollView = UIScrollView()
+        scrollView.frame = scrollView.bounds
+        //scrollView.contentInsetAdjustmentBehavior = .never
         scrollView.clipsToBounds = true
         return scrollView
     }()
-    
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person.circle")
@@ -132,8 +135,8 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
         view.addGestureRecognizer(tap)
         FirstNameTextField.delegate = self
         lastNameTextField.delegate = self
-       // dobTextField.delegate = self
-       // genderTextField.delegate = self
+        // dobTextField.delegate = self
+        // genderTextField.delegate = self
         emailTextField.delegate = self
         passwordTextField.delegate = self
         genderPicker.delegate = self
@@ -180,9 +183,9 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
                                     width: scrollView.width-60,
                                     height: 50)
         genderTextField.frame = CGRect(x: 30,
-                                    y: dobTextField.bottom + 10,
-                                    width: scrollView.width-60,
-                                    height: 50)
+                                       y: dobTextField.bottom + 10,
+                                       width: scrollView.width-60,
+                                       height: 50)
         emailTextField.frame = CGRect(x: 30,
                                       y: genderTextField.bottom + 10,
                                       width: scrollView.width-60,
@@ -219,14 +222,38 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
             !pass.isEmpty, pass.count >= 6 else {
                 errorMessageAlert(message: "Please enter all fields")
                 return
-            }
+        }
+        spinner.show(in: view)
         //Firebase Register
         FirebaseAuth.Auth.auth().createUser(withEmail: email, password: pass) { (result, error) in
+            DispatchQueue.main.async {
+                self.spinner.dismiss()
+            }
             if error != nil {
                 self.errorMessageAlert(message: "Email Already Exists")
                 return
             }
-            DataBaseManager.shared.insertUser(with: ChatUsers(firstName: fname, lastName: lName, email: email, dob: dob, gender: gender, passWrd: pass))
+            
+            let chatAppUser = ChatUsers(firstName: fname, lastName: lName, email: email, dob: dob, gender: gender)
+            DataBaseManager.shared.insertUser(with: chatAppUser, completion: {success in
+                if success {
+                    // upload image
+                    guard let image = self.imageView.image, let data = image.pngData() else {
+                        return
+                    }
+                    let filename = chatAppUser.profilePicFilename
+                    StorageManager.shared.uploadProfilePic(with: data, fileName: filename, completion: { result in
+                        switch result {
+                        case .success(let downloadUrl) :
+                            UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
+                            print(downloadUrl)
+                        case .failure(let error) :
+                            print("Storgae manager error is:\(error)")
+                            
+                        }
+                    })
+                }
+            })
             self.navigationController?.dismiss(animated: true, completion: nil)
             
         }
@@ -238,7 +265,7 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate, UINavig
         present(alert, animated: true)
     }
     
-   func showDatePicker() {
+    func showDatePicker() {
         datePicker.datePickerMode = .date
         let toolbar = UIToolbar()
         toolbar.sizeToFit()
@@ -327,7 +354,7 @@ extension RegistrationViewController: UIImagePickerControllerDelegate {
     }
 }
 
- extension RegistrationViewController : UIPickerViewDelegate, UIPickerViewDataSource {
+extension RegistrationViewController : UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }

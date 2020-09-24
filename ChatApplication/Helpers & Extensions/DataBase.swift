@@ -16,14 +16,21 @@ final class DataBaseManager {
     
     private let dataBaseref = Database.database().reference()
     
-    func insertUser(with User: ChatUsers) {
+    func insertUser(with User: ChatUsers, completion: @escaping (Bool) -> Void) {
         dataBaseref.child(User.safeEmail).setValue([
             "first_name" : User.firstName,
             "last_name" : User.lastName,
             "dob" : User.dob,
             "gender" : User.gender,
-            "password" : User.passWrd
-        ])
+           // "password" : User.passWrd
+        ], withCompletionBlock: { error, _ in
+            guard error == nil else {
+                print("Failed to write to the data base")
+                completion(false)
+                return
+            }
+            completion(true)
+        })
     }
     
 }

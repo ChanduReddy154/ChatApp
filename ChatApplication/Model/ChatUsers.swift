@@ -13,9 +13,23 @@ struct ChatUsers {
     let email : String
     let dob : String
     let gender : String
-    let passWrd : String
-    //let profilePic : String
-    
+    var profilePicFilename : String {
+        return "\(safeEmail)_profile_picture.png"
+    }
+var safeEmail : String {
+        var safeEmailAddress = email.replacingOccurrences(of: ".", with: "-")
+        safeEmailAddress = safeEmailAddress.replacingOccurrences(of: "@", with: "-")
+        return safeEmailAddress
+    }
+
+var safeDob : String {
+        var safeDob = dob.replacingOccurrences(of: "/", with: "-")
+        safeDob = safeDob.replacingOccurrences(of: ".", with: "-")
+        return safeDob
+    }
+}
+
+
 //    var safeEmailAdd : String {
 //        var emailSafe = email.addingPercentEncoding(withAllowedCharacters: .alphanumerics)
 //        emailSafe?.removingPercentEncoding
@@ -36,24 +50,12 @@ struct ChatUsers {
 //        safeDateOfBirth = dob
 //        return safeDateOfBirth!
 //    }
-    
-    var safeEmail : String {
-        var safeEmailAddress = email.replacingOccurrences(of: ".", with: "-")
-        safeEmailAddress = safeEmailAddress.replacingOccurrences(of: "@", with: "-")
-        return safeEmailAddress
-    }
 
-    var safePass : String {
-        var safePass = passWrd.replacingOccurrences(of: "@", with: "-")
-        safePass = safePass.replacingOccurrences(of: "#", with: "-")
-        safePass = safePass.replacingOccurrences(of: "$", with: "-")
-        safePass = safePass.replacingOccurrences(of: ".", with: "-")
-        return safePass
-    }
-    
-    var safeDob : String {
-        var safeDob = dob.replacingOccurrences(of: "/", with: "-")
-        safeDob = safeDob.replacingOccurrences(of: ".", with: "-")
-        return safeDob
-    }
-}
+
+//    var safePass : String {
+//        var safePass = passWrd.replacingOccurrences(of: "@", with: "-")
+//        safePass = safePass.replacingOccurrences(of: "#", with: "-")
+//        safePass = safePass.replacingOccurrences(of: "$", with: "-")
+//        safePass = safePass.replacingOccurrences(of: ".", with: "-")
+//        return safePass
+//    }

@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B1F982E251B598C00A8AD6D /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B1F982D251B598C00A8AD6D /* ChatViewController.swift */; };
 		1B4D289C2513D9270038C9D8 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4D289B2513D9270038C9D8 /* Constants.swift */; };
+		1B7DF056251C8B9800CE5B86 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7DF055251C8B9800CE5B86 /* StorageManager.swift */; };
 		1B8E272E2508C01300F9224C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1B8E272D2508C01300F9224C /* GoogleService-Info.plist */; };
 		1BA204D32510DD040072BEBA /* DataBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA204D22510DD040072BEBA /* DataBase.swift */; };
 		1BA204D52510E21A0072BEBA /* ForgotPassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA204D42510E21A0072BEBA /* ForgotPassViewController.swift */; };
@@ -29,7 +31,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1B1F982D251B598C00A8AD6D /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		1B4D289B2513D9270038C9D8 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		1B7DF055251C8B9800CE5B86 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		1B8E272D2508C01300F9224C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1BA204D22510DD040072BEBA /* DataBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBase.swift; sourceTree = "<group>"; };
 		1BA204D42510E21A0072BEBA /* ForgotPassViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPassViewController.swift; sourceTree = "<group>"; };
@@ -72,6 +76,7 @@
 				1BF778CC2507E19D002280CC /* Extensions.swift */,
 				1BA204D22510DD040072BEBA /* DataBase.swift */,
 				1B4D289B2513D9270038C9D8 /* Constants.swift */,
+				1B7DF055251C8B9800CE5B86 /* StorageManager.swift */,
 			);
 			path = "Helpers & Extensions";
 			sourceTree = "<group>";
@@ -101,7 +106,7 @@
 				1BA64E6B24EAB08F000DB32E /* SceneDelegate.swift */,
 				1BBC56D22507D69E00CDF621 /* Model */,
 				1BBC56D32507D6A600CDF621 /* View */,
-				1BBC56D42507D6AF00CDF621 /* Controller */,
+				1BBC56D42507D6AF00CDF621 /* Controllers */,
 				1BA204D12510DCD60072BEBA /* Helpers & Extensions */,
 				1BA64E7224EAB090000DB32E /* Assets.xcassets */,
 				1BA64E7424EAB090000DB32E /* LaunchScreen.storyboard */,
@@ -127,7 +132,7 @@
 			path = View;
 			sourceTree = "<group>";
 		};
-		1BBC56D42507D6AF00CDF621 /* Controller */ = {
+		1BBC56D42507D6AF00CDF621 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				1BA64E6D24EAB08F000DB32E /* ConversationViewController.swift */,
@@ -138,8 +143,9 @@
 				1BBC56DD2507D76B00CDF621 /* VideoPlayerViewController.swift */,
 				1BBC56DF2507D81200CDF621 /* ProfileViewController.swift */,
 				1BA204D42510E21A0072BEBA /* ForgotPassViewController.swift */,
+				1B1F982D251B598C00A8AD6D /* ChatViewController.swift */,
 			);
-			path = Controller;
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 		8283B7C554EB7603EE45278B /* Frameworks */ = {
@@ -288,7 +294,9 @@
 				1BBC56E02507D81200CDF621 /* ProfileViewController.swift in Sources */,
 				1B4D289C2513D9270038C9D8 /* Constants.swift in Sources */,
 				1BA64E6C24EAB08F000DB32E /* SceneDelegate.swift in Sources */,
+				1B1F982E251B598C00A8AD6D /* ChatViewController.swift in Sources */,
 				1BBC56D82507D73500CDF621 /* RegistrationViewController.swift in Sources */,
+				1B7DF056251C8B9800CE5B86 /* StorageManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
